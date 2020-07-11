@@ -1,4 +1,4 @@
-# Getting Started with Azure Maps
+# Azure Maps Sandbox
 
 ![enter image description here](https://www.pluralsight.com/content/dam/pluralsight/newsroom/brand-assets/logos/pluralsight-logo-vrt-color-2.png)  
 
