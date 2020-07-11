@@ -23,11 +23,20 @@
 </head>
 
 <body>
-
-  <div id="myMap"></div>
+  <h1> Kingspan Sandbox</h1>
+  <div id="myMap" ></div>
 
   <script type="text/javascript">
-
+  
+    mapObj =  {
+    center:[30.067559,31.278113],
+    zoom: 14,
+    //language:'en-US',
+    authOptions:{
+      authType: 'subscriptionKey',
+      subscriptionKey:'6_8knM0AnqJpKTYquWanWZEMFBnLD9uU-Z82hpWEuO4'
+    }};
+    varmap = new atlas.Map('myMap', mapObj);
   </script>
 
 </body>
