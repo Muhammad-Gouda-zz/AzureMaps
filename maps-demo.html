@@ -50,9 +50,12 @@
     function renderVehicles(map) {
       // Load icons
       var iconPromises = [
-        map.imageSprite.add('truck', 'https://raw.githubusercontent.com/jurgenonazure/getting-started-azure-maps/master/images/truck_40.png'),
-        map.imageSprite.add('excavator', 'https://raw.githubusercontent.com/jurgenonazure/getting-started-azure-maps/master/images/excavator_40.png')
+        map.imageSprite.add('truck', 'https://raw.githubusercontent.com/Muhammad-Gouda/AzureMaps/master/images/truck_40.png'),
+        map.imageSprite.add('excavator', 'https://raw.githubusercontent.com/Muhammad-Gouda/AzureMaps/master/images/excavator_40.png')
       ];
+
+      
+      
 
       Promise.all(iconPromises).then(renderVehiclesWithIcons(map))
 
