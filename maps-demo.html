@@ -24,20 +24,88 @@
 
 <body>
   <h1> Azure Maps Sandbox</h1>
-  <div id="myMap" ></div>
+  <div id="myMap"></div>
 
   <script type="text/javascript">
-  
-    mapObj =  {
-    center:[30.067559,31.278113],
-    zoom: 14,
-    //language:'en-US',
-    authOptions:{
-      authType: 'subscriptionKey',
-      subscriptionKey:'6_8knM0AnqJpKTYquWanWZEMFBnLD9uU-Z82hpWEuO4'
-    }};
-    varmap = new atlas.Map('myMap', mapObj);
+
+    mapObj = {
+      center: [-111.917202, 40.97946],
+      zoom: 14,
+      language: 'en-US',
+      authOptions: {
+        authType: 'subscriptionKey',
+        subscriptionKey: '6_8knM0AnqJpKTYquWanWZEMFBnLD9uU-Z82hpWEuO4'
+      }
+    };
+    map = new atlas.Map('myMap', mapObj);
+
+    map.events.add('ready', render);
+
+
+    function render() {
+      renderVehicles(map);
+
+    }
+
+    function renderVehicles(map) {
+      // Load icons
+      var iconPromises = [
+        map.imageSprite.add('truck', 'https://raw.githubusercontent.com/jurgenonazure/getting-started-azure-maps/master/images/truck_40.png'),
+        map.imageSprite.add('excavator', 'https://raw.githubusercontent.com/jurgenonazure/getting-started-azure-maps/master/images/excavator_40.png')
+      ];
+
+      Promise.all(iconPromises).then(renderVehiclesWithIcons(map))
+
+
+    }
+
+    function renderVehiclesWithIcons(map) {
+
+      var vehiclesDataSource = new atlas.source.DataSource();
+
+      map.sources.add(vehiclesDataSource);
+      var vheicleIconOption = {
+        iconOptions: {
+          image: ['get', 'vehicleType'],
+          allowOverlap: true
+        }
+      }
+      var vehicleLayer = new atlas.layer.SymbolLayer(vehiclesDataSource, null, vheicleIconOption);
+      map.layers.add(vehicleLayer);
+      vehiclesDataSource.add(getVehiclesData());
+
+
+    }
+    /*
+        function render() {
+          //render vehicles
+          //create empty vheicles data source
+          var vehiclesDataSource = atlas.source.DataSource();
+          //add the empty datasource to the current map object
+          map.sources.Add(vehiclesDataSource);
+
+          //create vheicle layer
+          // Wait for icons to be ready
+          Promise.all(iconPromises).then(function () {
+
+            // Add a symbol layer to render the vehicle points
+            var vehicleLayer = new atlas.layer.SymbolLayer(vehiclesDataSource, null, {
+
+              iconOptions: {
+                image: ['get', 'vehicleType'],
+                allowOverlap: true
+              }
+
+            });
+            map.layers.Add(vehicleLayer);
+            vehiclesDataSource.add(getVehiclesData());
+          })
+
+
+        }
+        */
   </script>
 
 </body>
+
 </html>
