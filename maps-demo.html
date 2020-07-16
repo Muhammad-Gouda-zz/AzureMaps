@@ -27,14 +27,14 @@
   <div id="myMap"></div>
 
   <script type="text/javascript">
-
+    var key = 'Your Subscribtion Key'
     mapObj = {
       center: [-111.917202, 40.97946],
       zoom: 14,
       language: 'en-US',
       authOptions: {
         authType: 'subscriptionKey',
-        subscriptionKey: '6_8knM0AnqJpKTYquWanWZEMFBnLD9uU-Z82hpWEuO4'
+        subscriptionKey: key
       }
     };
     map = new atlas.Map('myMap', mapObj);
@@ -144,8 +144,8 @@
 
     function getAddress(coordinate, callback) {
       query = coordinate[1] + ',' + coordinate[0];
-      subKey = '6_8knM0AnqJpKTYquWanWZEMFBnLD9uU-Z82hpWEuO4';
-      var requestUrl = 'https://atlas.microsoft.com/search/address/reverse/json?subscription-key=' + subKey + '&api-version=1.0&query=' + query;
+      
+      var requestUrl = 'https://atlas.microsoft.com/search/address/reverse/json?subscription-key=' + key + '&api-version=1.0&query=' + query;
 
       httpGet(requestUrl, data => {
         if(data == null)
