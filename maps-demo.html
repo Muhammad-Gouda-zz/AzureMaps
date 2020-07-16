@@ -39,12 +39,36 @@
     };
     map = new atlas.Map('myMap', mapObj);
 
-    map.events.add('ready', render);
+    map.events.add('ready', renderAll);
 
 
-    function render() {
+
+    function renderAll() {
+      renderZones(map);
       renderVehicles(map);
 
+
+    }
+
+    function renderZones(map) {
+      var zonesDataSource = new atlas.source.DataSource();
+      zonesDataSource.add(getZonesData());
+
+      map.sources.add(zonesDataSource);
+
+      var zoneStyle = {
+        fillColor: '#00AA00',
+        fillOpacity: 0.1
+      }
+      var zonesLayer = new atlas.layer.PolygonLayer(zonesDataSource, null, zoneStyle);
+      map.layers.add(zonesLayer);
+
+      renderZoneBorder(map, zonesDataSource)
+    }
+
+    function renderZoneBorder(map, zonesDataSource) {
+      var zonesBorderLayer = new atlas.layer.LineLayer(zonesDataSource, null, null);
+      map.layers.add(zonesBorderLayer);
     }
 
     function renderVehicles(map) {
@@ -54,8 +78,8 @@
         map.imageSprite.add('excavator', 'https://raw.githubusercontent.com/Muhammad-Gouda/AzureMaps/master/images/excavator_40.png')
       ];
 
-      
-      
+
+
 
       Promise.all(iconPromises).then(renderVehiclesWithIcons(map))
 
@@ -76,37 +100,82 @@
       var vehicleLayer = new atlas.layer.SymbolLayer(vehiclesDataSource, null, vheicleIconOption);
       map.layers.add(vehicleLayer);
       vehiclesDataSource.add(getVehiclesData());
+      //Define an HTML template for a custom popup content laypout.
+      var popupTemplate = '<div class="popup-dialog"><div class="header">{header}</div><div class="details">{details}</div></div>';
+
+      //Add a hover event to the symbol layer.
+      map.events.add('mouseover', vehicleLayer, mouseoverHandler);
+
+      function mouseoverHandler(e) {
+        //Make sure that the point exists.
+        if (e.shapes && e.shapes.length > 0) {
+          var content, coordinate;
+          var properties = e.shapes[0].getProperties();
+          coordinate = e.shapes[0].getCoordinates();
+          getAddress(coordinate, address => {
+            content = popupTemplate.replace(/{header}/g, properties.vehicleType + '-' + properties.fleetNumber).
+              replace(/{details}/g, '<p>Lon: ' + coordinate[0] + '<p>Lat: ' + coordinate[1] + '<p>Address: ' + address);
+
+
+            popup.setOptions({
+              //Update the content of the popup.
+              content: content,
+
+              //Update the popup's position with the symbol's coordinate.
+              position: coordinate
+
+            });
+            //Open the popup.
+            popup.open(map);
+
+          })
+        }
+      }
+
+
+
+      map.events.add('mouseleave', vehicleLayer, function () {
+
+        popup.close();
+      });
 
 
     }
-    /*
-        function render() {
-          //render vehicles
-          //create empty vheicles data source
-          var vehiclesDataSource = atlas.source.DataSource();
-          //add the empty datasource to the current map object
-          map.sources.Add(vehiclesDataSource);
 
-          //create vheicle layer
-          // Wait for icons to be ready
-          Promise.all(iconPromises).then(function () {
+    function getAddress(coordinate, callback) {
+      query = coordinate[1] + ',' + coordinate[0];
+      subKey = '6_8knM0AnqJpKTYquWanWZEMFBnLD9uU-Z82hpWEuO4';
+      var requestUrl = 'https://atlas.microsoft.com/search/address/reverse/json?subscription-key=' + subKey + '&api-version=1.0&query=' + query;
 
-            // Add a symbol layer to render the vehicle points
-            var vehicleLayer = new atlas.layer.SymbolLayer(vehiclesDataSource, null, {
+      httpGet(requestUrl, data => {
+        if(data == null)
+        callback('Error')
+        var jsonData = JSON.parse(data);
 
-              iconOptions: {
-                image: ['get', 'vehicleType'],
-                allowOverlap: true
-              }
+        var address = 'Initial Value' ;
+        address = jsonData.addresses && jsonData.addresses.length > 0 ?
+          jsonData.addresses[0].address.freeformAddress
+          : 'Unknown Address';
 
-            });
-            map.layers.Add(vehicleLayer);
-            vehiclesDataSource.add(getVehiclesData());
-          })
+        callback(address);
+      });
+    }
+    //Create a popup but leave it closed so we can update it and display it later.
+    popup = new atlas.Popup({
+      pixelOffset: [0, -18],
+      closeButton: false
+    });
 
+    function httpGet(theUrl, callback) {
+      var xmlHttp = new XMLHttpRequest();
+      xmlHttp.onreadystatechange = function () {
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+          callback(xmlHttp.responseText);
+      }
+      xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+      xmlHttp.send();
+    }
 
-        }
-        */
   </script>
 
 </body>

@@ -6,6 +6,18 @@ function getVehiclesData() {
     features: [
       {
         'type': 'Feature',
+        'id': '0',
+        'geometry': {
+          'type': 'Point',
+          'coordinates': [-111.92758111252543, 40.989749225701966]
+        },
+        'properties': {
+          'vehicleType': 'excavator',
+          'fleetNumber': '7198'
+        }
+      },
+      {
+        'type': 'Feature',
         'id': '1',
         'geometry': {
           'type': 'Point',
